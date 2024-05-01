@@ -1,9 +1,11 @@
 package ru.jbisss.cdrservice.cdrGenerator;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import ru.jbisss.cdrservice.ApplicationConstants;
 import ru.jbisss.cdrservice.cdrGenerator.subGenerators.CallPeriodGenerator;
+import ru.jbisss.cdrservice.cdrGenerator.subGenerators.PhoneNumberGenerator;
 import ru.jbisss.cdrservice.filewriter.FilesWriter;
 import ru.jbisss.cdrservice.entity.Abonent;
 import ru.jbisss.cdrservice.entity.Transaction;
@@ -24,9 +26,12 @@ import java.util.Random;
 @RequiredArgsConstructor
 public class CdrGenerator implements ICdrGenerator {
 
-    private static final int PERIODS_TO_GENERATE = 1;
-    private static final int FILES_IN_SINGLE_PERIOD = 12;
-    private static final int ROWS_IN_SINGLE_FILE = 50;
+    @Value("${generator.periodsToGenerate}")
+    private final int PERIODS_TO_GENERATE;
+    @Value("${generator.filesInSinglePeriod}")
+    private final int FILES_IN_SINGLE_PERIOD;
+    @Value("${generator.rowsInSingleFile}")
+    private final int ROWS_IN_SINGLE_FILE;
 
     private final CallPeriodGenerator callPeriodGenerator;
     private final CallTypeGenerator callTypeGenerator;
@@ -34,6 +39,7 @@ public class CdrGenerator implements ICdrGenerator {
 
     private final AbonentRepository abonentRepository;
     private final TransactionRepository transactionRepository;
+    private final PhoneNumberGenerator phoneNumberGenerator;
 
     /**
      * Method which generates all CDR-files
@@ -45,8 +51,9 @@ public class CdrGenerator implements ICdrGenerator {
             for (int j = 0; j < FILES_IN_SINGLE_PERIOD; j++) {
                 Cdr currentCdr = new Cdr();
                 for (int q = 0; q < ROWS_IN_SINGLE_FILE; q++) {
-                    String[] callPeriodTokens = callPeriodGenerator.generateRandomCallPeriod(j + 1).split(ApplicationConstants.COMMA_DELIMITER);
-                    Cdr.CdrRow.CallType randomCallType = callTypeGenerator.generateRandomCallType();
+                    callPeriodGenerator.setMonthToSet(j + 1);
+                    String[] callPeriodTokens = callPeriodGenerator.generate().split(ApplicationConstants.COMMA_DELIMITER);
+                    Cdr.CdrRow.CallType randomCallType = callTypeGenerator.generate();
                     String chosenNumber = chooseNumber();
                     long startCall = Long.parseLong(callPeriodTokens[0]);
                     long endCall = Long.parseLong(callPeriodTokens[1]);
@@ -63,22 +70,18 @@ public class CdrGenerator implements ICdrGenerator {
     private String chooseNumber() {
         int nextInt = new Random().nextInt(2);
         if (nextInt == 0) {
-            return getExistingNumber();
+            return getRandomExistingNumber();
         }
-        return getRandomNumber();
+        return phoneNumberGenerator.generate();
     }
 
-    private String getExistingNumber() {
+    private String getRandomExistingNumber() {
         Iterator<Abonent> abonentIterator = abonentRepository.findAll().iterator();
         List<String> phoneNumbers = new ArrayList<>();
         while (abonentIterator.hasNext()) {
             phoneNumbers.add(abonentIterator.next().getPhoneNumber());
         }
         return phoneNumbers.get(new Random().nextInt(phoneNumbers.size()));
-    }
-
-    private String getRandomNumber() {
-        return "12";
     }
 
     private void saveTransaction(String callType, String chosenNumber, long startCall, long endCall) {

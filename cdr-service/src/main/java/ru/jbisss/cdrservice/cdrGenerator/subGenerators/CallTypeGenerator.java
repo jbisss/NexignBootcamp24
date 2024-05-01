@@ -9,11 +9,12 @@ import java.util.Random;
  * Generator of call type
  */
 @Service
-public class CallTypeGenerator {
+public class CallTypeGenerator implements Generator<Cdr.CdrRow.CallType> {
 
     private static final int CALL_TYPE_BOUND = 2;
 
-    public Cdr.CdrRow.CallType generateRandomCallType() {
+    @Override
+    public Cdr.CdrRow.CallType generate() {
         int nextInt = new Random().nextInt(CALL_TYPE_BOUND) + 1;
         if (nextInt == 1) {
             return Cdr.CdrRow.CallType.OUT;

@@ -1,5 +1,6 @@
 package ru.jbisss.cdrservice.cdrGenerator.subGenerators;
 
+import lombok.Setter;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -10,18 +11,21 @@ import java.util.Random;
  * Generator of call period
  */
 @Service
-public class CallPeriodGenerator {
+@Setter
+public class CallPeriodGenerator implements Generator<String> {
 
-    private static final int HOURS_BEFORE_NOW = 3;
+    private int hoursBeforeNow = 3;
 
-    private static final int YEAR_TO_SET = 2024;
-    private static final int DAY_OF_MONTH_TO_SET = 10;
-    private static final int HOURS_TO_SET = 10;
-    private static final int MINUTES_TO_SET = 10;
+    private int yearToSet = 2024;
+    private int monthToSet = 10;
+    private int dayOfMonthToSet = 10;
+    private int hoursToSet = 10;
+    private int minutesToSet = 10;
 
-    public String generateRandomCallPeriod(int monthNumber) {
-        LocalDateTime localDateTimeEnd = LocalDateTime.of(YEAR_TO_SET, monthNumber, DAY_OF_MONTH_TO_SET, HOURS_TO_SET, MINUTES_TO_SET);
-        LocalDateTime localDateTimeStart = localDateTimeEnd.minusHours(HOURS_BEFORE_NOW);
+    @Override
+    public String generate() {
+        LocalDateTime localDateTimeEnd = LocalDateTime.of(yearToSet, monthToSet, dayOfMonthToSet, hoursToSet, minutesToSet);
+        LocalDateTime localDateTimeStart = localDateTimeEnd.minusHours(hoursBeforeNow);
 
         long endMillis = localDateTimeEnd.atZone(ZoneOffset.UTC).toInstant().toEpochMilli();
         long startMillis = localDateTimeStart.atZone(ZoneOffset.UTC).toInstant().toEpochMilli();
