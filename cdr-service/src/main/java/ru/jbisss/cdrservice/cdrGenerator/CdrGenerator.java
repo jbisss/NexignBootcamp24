@@ -6,7 +6,6 @@ import org.springframework.stereotype.Service;
 import ru.jbisss.cdrservice.ApplicationConstants;
 import ru.jbisss.cdrservice.cdrGenerator.subGenerators.CallPeriodGenerator;
 import ru.jbisss.cdrservice.cdrGenerator.subGenerators.PhoneNumberGenerator;
-import ru.jbisss.cdrservice.filewriter.FilesWriter;
 import ru.jbisss.cdrservice.entity.Abonent;
 import ru.jbisss.cdrservice.entity.Transaction;
 import ru.jbisss.cdrservice.kafka.producer.KafkaCdrFileProducer;
@@ -36,7 +35,6 @@ public class CdrGenerator implements ICdrGenerator {
 
     private final CallPeriodGenerator callPeriodGenerator;
     private final CallTypeGenerator callTypeGenerator;
-    private final FilesWriter<Cdr> cdrFilesWriter;
 
     private final AbonentRepository abonentRepository;
     private final TransactionRepository transactionRepository;
