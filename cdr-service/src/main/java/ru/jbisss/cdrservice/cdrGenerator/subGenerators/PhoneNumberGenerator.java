@@ -14,7 +14,7 @@ import java.util.Random;
 public class PhoneNumberGenerator implements Generator<String> {
 
     @Value("${generator.phoneNumberLength}")
-    private final int PHONE_NUMBER_LENGTH;
+    private int PHONE_NUMBER_LENGTH;
     private static final String NUMBER_STARTS_WITH = "7";
     private static final int BOUND_FOR_NUMBER_CHAR = 10;
 

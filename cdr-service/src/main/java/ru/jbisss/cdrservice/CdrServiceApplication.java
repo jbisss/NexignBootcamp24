@@ -13,7 +13,7 @@ public class CdrServiceApplication {
 
     public static void main(String[] args) {
         ConfigurableApplicationContext applicationContext = SpringApplication.run(CdrServiceApplication.class, args);
-        System.out.println(applicationContext.getBean(AbonentRepository.class).findAll());
+        // System.out.println(applicationContext.getBean(AbonentRepository.class).findAll());
         applicationContext.getBean(CdrGenerator.class).generateCdrs();
     }
 }

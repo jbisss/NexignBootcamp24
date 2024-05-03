@@ -9,6 +9,7 @@ import ru.jbisss.cdrservice.cdrGenerator.subGenerators.PhoneNumberGenerator;
 import ru.jbisss.cdrservice.filewriter.FilesWriter;
 import ru.jbisss.cdrservice.entity.Abonent;
 import ru.jbisss.cdrservice.entity.Transaction;
+import ru.jbisss.cdrservice.kafka.producer.KafkaCdrFileProducer;
 import ru.jbisss.cdrservice.repository.AbonentRepository;
 import ru.jbisss.cdrservice.repository.TransactionRepository;
 import ru.jbisss.cdrservice.cdrGenerator.domain.Cdr;
@@ -27,11 +28,11 @@ import java.util.Random;
 public class CdrGenerator implements ICdrGenerator {
 
     @Value("${generator.periodsToGenerate}")
-    private final int PERIODS_TO_GENERATE;
+    private int PERIODS_TO_GENERATE;
     @Value("${generator.filesInSinglePeriod}")
-    private final int FILES_IN_SINGLE_PERIOD;
+    private int FILES_IN_SINGLE_PERIOD;
     @Value("${generator.rowsInSingleFile}")
-    private final int ROWS_IN_SINGLE_FILE;
+    private int ROWS_IN_SINGLE_FILE;
 
     private final CallPeriodGenerator callPeriodGenerator;
     private final CallTypeGenerator callTypeGenerator;
@@ -40,6 +41,8 @@ public class CdrGenerator implements ICdrGenerator {
     private final AbonentRepository abonentRepository;
     private final TransactionRepository transactionRepository;
     private final PhoneNumberGenerator phoneNumberGenerator;
+
+    private final KafkaCdrFileProducer kafkaCdrFileProducer;
 
     /**
      * Method which generates all CDR-files
@@ -63,7 +66,8 @@ public class CdrGenerator implements ICdrGenerator {
                 cdrs.add(currentCdr);
             }
         }
-        cdrs.forEach(cdrFilesWriter::write);
+        cdrs.forEach(cdr -> kafkaCdrFileProducer.sendMessage(cdr.toString()));
+        // cdrs.forEach(cdrFilesWriter::write);
         System.out.println(transactionRepository.findAll());
     }
 
