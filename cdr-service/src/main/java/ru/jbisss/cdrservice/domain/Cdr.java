@@ -1,12 +1,10 @@
-package ru.jbisss.cdrservice.cdrGenerator.domain;
+package ru.jbisss.cdrservice.domain;
 
+import lombok.Builder;
 import lombok.Getter;
 import ru.jbisss.cdrservice.ApplicationConstants;
 
-import java.time.LocalDateTime;
-import java.time.ZoneOffset;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 public class Cdr {
@@ -24,41 +22,48 @@ public class Cdr {
             CallType(String code) {
                 this.code = code;
             }
+
+            public CallType getOppositeType() {
+                if (this.code.equals(IN.getCode())) {
+                    return OUT;
+                }
+                return IN;
+            }
         }
 
+        @Getter
         private final CallType callType;
-        private final String phoneNumber;
+        @Getter
+        private final String callerPhoneNumber;
+        @Getter
+        private final String callingPhoneNumber;
+        @Getter
         private final long startCallDate;
+        @Getter
         private final long endCallDate;
 
-        public CdrRow(CallType callType, String phoneNumber, long startCallDate, long endCallDate) {
+        @Builder
+        public CdrRow(CallType callType, String callerPhoneNumber, String callingPhoneNumber, long startCallDate, long endCallDate) {
             this.callType = callType;
-            this.phoneNumber = phoneNumber;
+            this.callerPhoneNumber = callerPhoneNumber;
+            this.callingPhoneNumber = callingPhoneNumber;
             this.startCallDate = startCallDate;
             this.endCallDate = endCallDate;
         }
 
-        public long getCallTime() {
-            return endCallDate - startCallDate;
-        }
-
-        public String getCallMonth() {
-            LocalDateTime dateTime = LocalDateTime.ofEpochSecond(startCallDate / 1000, 0, ZoneOffset.UTC);
-            return String.valueOf(dateTime.getMonth().getValue());
-        }
-
-        public String getCallType() {
-            return callType.getCode();
-        }
-
-        public String getPhoneNumber() {
-            return phoneNumber;
+        public CdrRow getOppositeRow() {
+            return new CdrRow(this.callType.getOppositeType(),
+                    this.callingPhoneNumber,
+                    this.callerPhoneNumber,
+                    this.startCallDate,
+                    this.endCallDate);
         }
 
         @Override
         public String toString() {
             return  callType.code + ApplicationConstants.COMMA_DELIMITER +
-                    phoneNumber + ApplicationConstants.COMMA_DELIMITER +
+                    callerPhoneNumber + ApplicationConstants.COMMA_DELIMITER +
+                    callingPhoneNumber + ApplicationConstants.COMMA_DELIMITER +
                     startCallDate + ApplicationConstants.COMMA_DELIMITER +
                     endCallDate;
         }
@@ -66,12 +71,8 @@ public class Cdr {
 
     private final List<CdrRow> cdrRows = new ArrayList<>();
 
-    public void addRow(CdrRow.CallType callType, String phoneNumber, long startCallDate, long endCallDate) {
-        cdrRows.add(new CdrRow(callType, phoneNumber, startCallDate, endCallDate));
-    }
-
-    public Iterator<CdrRow> getRowsIterator() {
-        return this.cdrRows.iterator();
+    public void addRow(CdrRow cdrRow) {
+        cdrRows.add(cdrRow);
     }
 
     @Override

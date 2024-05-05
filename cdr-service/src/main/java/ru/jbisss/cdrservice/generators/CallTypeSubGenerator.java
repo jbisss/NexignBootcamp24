@@ -1,7 +1,7 @@
-package ru.jbisss.cdrservice.cdrGenerator.subGenerators;
+package ru.jbisss.cdrservice.generators;
 
 import org.springframework.stereotype.Service;
-import ru.jbisss.cdrservice.cdrGenerator.domain.Cdr;
+import ru.jbisss.cdrservice.domain.Cdr;
 
 import java.util.Random;
 
@@ -9,7 +9,7 @@ import java.util.Random;
  * Generator of call type
  */
 @Service
-public class CallTypeGenerator implements Generator<Cdr.CdrRow.CallType> {
+public class CallTypeSubGenerator implements SubGenerator<Cdr.CdrRow.CallType> {
 
     private static final int CALL_TYPE_BOUND = 2;
 

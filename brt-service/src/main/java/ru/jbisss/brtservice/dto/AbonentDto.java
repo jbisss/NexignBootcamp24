@@ -3,7 +3,7 @@ package ru.jbisss.brtservice.dto;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
-import java.math.BigDecimal;
+
 import java.time.LocalDateTime;
 
 @Data
@@ -15,5 +15,5 @@ public class AbonentDto {
     private String phoneNumber;
     private int tariffId;
     private LocalDateTime connectionDate;
-    private BigDecimal balance;
+    private Double balance;
 }

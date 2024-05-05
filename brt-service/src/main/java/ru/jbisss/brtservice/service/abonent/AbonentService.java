@@ -8,7 +8,6 @@ import ru.jbisss.brtservice.dto.AbonentDto;
 import ru.jbisss.brtservice.entity.AbonentEntity;
 import ru.jbisss.brtservice.repository.AbonentRepository;
 
-import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 @Service
@@ -44,7 +43,7 @@ public class AbonentService implements IAbonentService {
     @Transactional
     public AbonentDto topUpAbonentBalance(int topUp, String msisdn) {
         AbonentEntity abonentEntity = abonentRepository.findByPhoneNumber(msisdn);
-        abonentEntity.setBalance(abonentEntity.getBalance().add(BigDecimal.valueOf(topUp)));
+        abonentEntity.setBalance(abonentEntity.getBalance() + topUp);
         AbonentEntity abonentEntityWithToppedUpBalance = abonentRepository.save(abonentEntity);
         return buildAbonentDtoByAbonentEntity(abonentEntityWithToppedUpBalance);
     }

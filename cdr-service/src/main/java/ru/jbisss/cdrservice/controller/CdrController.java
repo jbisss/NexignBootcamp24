@@ -5,7 +5,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 import ru.jbisss.cdrservice.ApplicationConstants;
-import ru.jbisss.cdrservice.cdrGenerator.ICdrGenerator;
+import ru.jbisss.cdrservice.generators.ICdrGenerator;
 
 @RestController
 @RequestMapping("/api")

@@ -9,11 +9,11 @@ import ru.jbisss.brtservice.service.brt.IBrtService;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class KafkaCdrFileConsumer {
+public class KafkaCdrConsumer {
 
     private final IBrtService brtService;
 
-    @KafkaListener(topics = "cdrFiles", groupId = "defaultGroup")
+    @KafkaListener(topics = "cdrFiles", groupId = "cdrConsumerGroup")
     public void consume(String message){
         log.info("<== message consumed: {}", message);
         brtService.addTariffToCdrAndSend(message);

@@ -1,4 +1,4 @@
-package ru.jbisss.cdrservice.cdrGenerator.subGenerators;
+package ru.jbisss.cdrservice.generators;
 
 import lombok.Setter;
 import org.springframework.stereotype.Service;
@@ -12,19 +12,19 @@ import java.util.Random;
  */
 @Service
 @Setter
-public class CallPeriodGenerator implements Generator<String> {
+public class CallPeriodSubGenerator implements SubGenerator<String> {
 
     private int hoursBeforeNow = 3;
 
     private int yearToSet = 2024;
-    private int monthToSet = 10;
+    private int month = 10;
     private int dayOfMonthToSet = 10;
     private int hoursToSet = 10;
     private int minutesToSet = 10;
 
     @Override
     public String generate() {
-        LocalDateTime localDateTimeEnd = LocalDateTime.of(yearToSet, monthToSet, dayOfMonthToSet, hoursToSet, minutesToSet);
+        LocalDateTime localDateTimeEnd = LocalDateTime.of(yearToSet, month, dayOfMonthToSet, hoursToSet, minutesToSet);
         LocalDateTime localDateTimeStart = localDateTimeEnd.minusHours(hoursBeforeNow);
 
         long endMillis = localDateTimeEnd.atZone(ZoneOffset.UTC).toInstant().toEpochMilli();

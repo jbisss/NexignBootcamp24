@@ -1,8 +1,7 @@
-package ru.jbisss.cdrservice;
+package ru.jbisss.hrsservice;
 
 public interface ApplicationConstants {
     String COMMA_DELIMITER = ",";
     String LINE_BREAK = "\n";
-    String SUCCESS = "success";
-    String EMPTY_STRING = "";
+    String PATH_TO_CDRS = ".\\cdr-service\\src\\main\\resources\\static\\";
 }

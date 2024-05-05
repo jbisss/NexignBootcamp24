@@ -1,4 +1,4 @@
-package ru.jbisss.cdrservice.cdrGenerator;
+package ru.jbisss.cdrservice.generators;
 
 public interface ICdrGenerator {
 

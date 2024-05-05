@@ -3,7 +3,6 @@ package ru.jbisss.brtservice.entity;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 @Getter
@@ -30,5 +29,5 @@ public class AbonentEntity {
     private LocalDateTime connectionDate;
 
     @Column(name = "balance")
-    private BigDecimal balance;
+    private Double balance;
 }
