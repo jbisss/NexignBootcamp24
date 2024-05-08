@@ -1,7 +1,12 @@
 package ru.jbisss.hrsservice.repository;
 
-import org.springframework.data.repository.CrudRepository;
+import org.springframework.data.jpa.repository.JpaRepository;
 import ru.jbisss.hrsservice.entity.RemainsEntity;
+import ru.jbisss.hrsservice.entity.ServiceInTariffEntity;
 
-public interface RemainsRepository extends CrudRepository<RemainsEntity, Integer> {
+import java.util.Optional;
+
+public interface RemainsRepository extends JpaRepository<RemainsEntity, Integer> {
+
+    Optional<RemainsEntity> findByAbonentPhoneNumberAndServiceInTariff(String abonentPhoneNumber, ServiceInTariffEntity serviceInTariff);
 }

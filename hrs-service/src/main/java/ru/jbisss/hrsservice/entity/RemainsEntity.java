@@ -17,15 +17,15 @@ public class RemainsEntity {
     @Id
     @Column(name = "remains_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int remainsId;
+    private Integer remainsId;
 
-    @Column(name = "abonent_id")
-    private int abonentId;
+    @Column(name = "abonent_phone_number")
+    private String abonentPhoneNumber;
 
     @OneToOne
     @JoinColumn(name = "service_in_tariff_id")
     private ServiceInTariffEntity serviceInTariff;
 
     @Column(name = "remains")
-    private int remains;
+    private Integer remains;
 }

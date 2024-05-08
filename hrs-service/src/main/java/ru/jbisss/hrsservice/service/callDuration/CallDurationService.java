@@ -9,11 +9,18 @@ public class CallDurationService implements ICallDurationService {
 
     @Getter
     @RequiredArgsConstructor
-    static class CallDuration {
+    public static class CallDuration {
 
-        private final int hours;
-        private final int minutes;
-        private final int seconds;
+        private final long hours;
+        private final long minutes;
+        private final long seconds;
+
+        public long getMinutes() {
+            if (seconds == 0) {
+                return minutes;
+            }
+            return minutes + 1;
+        }
 
         @Override
         public String toString() {
@@ -23,6 +30,12 @@ public class CallDurationService implements ICallDurationService {
 
     @Override
     public CallDuration countCallDuration(long startCallTime, long endCallTime) {
-        return new CallDuration(0, 0, 0);
+        long entireSeconds = (endCallTime - startCallTime) / 1000;
+        long hours = (entireSeconds / 3600);
+        entireSeconds -= hours * 3600;
+        long minutes = (entireSeconds / 60);
+        entireSeconds -= minutes * 60;
+        long seconds = entireSeconds;
+        return new CallDuration(hours, minutes, seconds);
     }
 }

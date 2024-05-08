@@ -4,6 +4,9 @@ import lombok.Builder;
 import lombok.Getter;
 import ru.jbisss.hrsservice.ApplicationConstants;
 
+import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -51,6 +54,21 @@ public class CdrWithTariff {
             this.startCallDate = startCallDate;
             this.endCallDate = endCallDate;
             this.tariff = tariff;
+        }
+
+        public String getCallMonthWithYearAsString() {
+            LocalDateTime dateTime = LocalDateTime.ofEpochSecond(startCallDate / 1000, 0, ZoneOffset.UTC);
+            SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM");
+            return formatter.format(dateTime);
+        }
+
+        public LocalDateTime getCallMonthWithYear() {
+            return LocalDateTime.ofEpochSecond(startCallDate / 1000, 0, ZoneOffset.UTC);
+        }
+
+        public LocalDateTime getPreviousCallMonthWithYear() {
+            LocalDateTime dateTime = LocalDateTime.ofEpochSecond(startCallDate / 1000, 0, ZoneOffset.UTC);
+            return dateTime.minusMonths(1);
         }
 
         @Override

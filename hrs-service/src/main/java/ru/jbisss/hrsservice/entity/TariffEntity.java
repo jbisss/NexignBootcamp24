@@ -34,8 +34,8 @@ public class TariffEntity {
     private BigDecimal abonentPayment;
 
     @Column(name = "tariff_extra")
-    private int tariffExtra;
+    private Integer tariffExtra;
 
-    @OneToMany(mappedBy = "tariff")
+    @OneToMany(mappedBy = "tariff", fetch = FetchType.EAGER)
     private Set<ServiceInTariffEntity> servicesInTariffSet = new HashSet<>();
 }

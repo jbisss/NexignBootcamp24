@@ -33,7 +33,7 @@ public class ServiceInTariffEntity {
     private BigDecimal cost;
 
     @Column(name = "count")
-    private int count;
+    private Integer count;
 
     @OneToOne(mappedBy = "serviceInTariff")
     private RemainsEntity remains;
