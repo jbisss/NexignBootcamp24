@@ -18,7 +18,6 @@ public class KafkaCdrConsumer {
     @KafkaListener(topics = "cdrFiles", groupId = "cdrConsumerGroup")
     public void consume(String message){
         log.info("<== message consumed: {}", message);
-        brtService.setKafkaProducer(kafkaCdrWithTariffProducer);
         brtService.addTariffToCdrAndSend(message);
     }
 }

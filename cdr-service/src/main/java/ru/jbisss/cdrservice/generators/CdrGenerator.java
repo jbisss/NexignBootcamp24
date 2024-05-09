@@ -26,6 +26,8 @@ public class CdrGenerator implements ICdrGenerator {
     private int FILES_IN_SINGLE_PERIOD;
     @Value("${generator.rowsInSingleFile}")
     private int ROWS_IN_SINGLE_FILE;
+    @Value("${generator.rowsInSinglePeriod}")
+    private int ROWS_IN_SINGLE_PERIOD;
 
     private final CallPeriodSubGenerator callPeriodGenerator;
     private final CallTypeSubGenerator callTypeGenerator;
@@ -41,17 +43,18 @@ public class CdrGenerator implements ICdrGenerator {
      */
     @Override
     public void generateCdrs() {
-        List<Cdr> cdrs = new ArrayList<>();
         for (int i = 0; i < PERIODS_TO_GENERATE; i++) {
             for (int j = 0; j < FILES_IN_SINGLE_PERIOD; j++) {
                 Cdr currentCdr = new Cdr();
-                for (int q = 0; q < ROWS_IN_SINGLE_FILE; q++) {
+                for (int q = 0; q < ROWS_IN_SINGLE_PERIOD; q++) {
                     constructCdrRow(currentCdr, j + 1);
+                    if ((q + 1) == ROWS_IN_SINGLE_FILE) {
+                        kafkaCdrProducer.sendMessage(currentCdr.toString());
+                        currentCdr = new Cdr();
+                    }
                 }
-                cdrs.add(currentCdr);
             }
         }
-        cdrs.forEach(cdr -> kafkaCdrProducer.sendMessage(cdr.toString()));
         System.out.println(transactionRepository.findAll());
     }
 

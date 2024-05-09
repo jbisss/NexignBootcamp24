@@ -9,14 +9,13 @@ import org.springframework.stereotype.Service;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class KafkaCdrWithTariffProducer implements KafkaProducer {
+public class KafkaCdrWithTariffProducer {
 
     @Value("${kafka.producer.topic.name}")
     private String kafkaTopicName;
 
     private final KafkaTemplate<String, String> kafkaTemplate;
 
-    @Override
     public void sendMessage(String message) {
         log.info("==> sending message: {}", message);
         kafkaTemplate.send(kafkaTopicName, message);

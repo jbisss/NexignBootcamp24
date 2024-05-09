@@ -4,7 +4,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import org.springframework.stereotype.Service;
 import ru.jbisss.brtservice.domain.CdrWithTariff;
-import ru.jbisss.brtservice.kafka.producer.KafkaProducer;
+import ru.jbisss.brtservice.kafka.producer.KafkaCdrWithTariffProducer;
 import ru.jbisss.brtservice.service.cdrValidator.ICdrValidator;
 
 @Service
@@ -13,12 +13,11 @@ public class BrtService implements IBrtService {
 
     private final ICdrValidator cdrValidator;
 
-    @Setter
-    private KafkaProducer kafkaProducer;
+    private KafkaCdrWithTariffProducer kafkaCdrWithTariffProducer;
 
     @Override
     public void addTariffToCdrAndSend(String cdrAsString) {
         CdrWithTariff cdrWithTariff = cdrValidator.validateCdrAndAddTariff(cdrAsString);
-        kafkaProducer.sendMessage(cdrWithTariff.toString());
+        kafkaCdrWithTariffProducer.sendMessage(cdrWithTariff.toString());
     }
 }
