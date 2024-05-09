@@ -7,6 +7,7 @@ import ru.jbisss.hrsservice.ApplicationConstants;
 import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -58,8 +59,8 @@ public class CdrWithTariff {
 
         public String getCallMonthWithYearAsString() {
             LocalDateTime dateTime = LocalDateTime.ofEpochSecond(startCallDate / 1000, 0, ZoneOffset.UTC);
-            SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM");
-            return formatter.format(dateTime);
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM");
+            return dateTime.format(formatter);
         }
 
         public LocalDateTime getCallMonthWithYear() {

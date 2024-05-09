@@ -9,6 +9,7 @@ import ru.jbisss.hrsservice.domain.CdrWithTariff.CdrRow;
 import ru.jbisss.hrsservice.domain.CdrWithTariff.CdrRow.CallType;
 import ru.jbisss.hrsservice.kafka.producer.KafkaDebtProducer;
 import ru.jbisss.hrsservice.repository.DebtRepository;
+import ru.jbisss.hrsservice.repository.RemainsRepository;
 import ru.jbisss.hrsservice.service.remains.initializer.IRemainsInitializer;
 import ru.jbisss.hrsservice.service.tariff.definer.TariffDefiner;
 
@@ -22,6 +23,7 @@ public class HrsService implements IHrsService {
 
     private final TariffDefiner tariffDefiner;
 
+    private final RemainsRepository remainsRepository;
     private final DebtRepository debtRepository;
 
     private final IRemainsInitializer remainsInitializer;
@@ -35,7 +37,10 @@ public class HrsService implements IHrsService {
             tariffDefiner.defineTariffAndCountDebt(it.next());
         }
         sendDebtsToBrt();
-        clearDebtsPerCdr();
+        if (cdrWithTariff.getCdrRows().next().getCallMonthWithYear().getMonthValue() == 12) {
+            clearDebtsPerCdr();
+        }
+        clearRemains();
     }
 
     private CdrWithTariff constructCdrWithTariff(String cdrWithTariffAsString) {
@@ -69,5 +74,9 @@ public class HrsService implements IHrsService {
 
     private void clearDebtsPerCdr() {
         debtRepository.deleteAll();
+    }
+
+    private void clearRemains() {
+        remainsRepository.deleteAll();
     }
 }

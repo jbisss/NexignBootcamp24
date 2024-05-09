@@ -41,7 +41,7 @@ public class CdrValidator implements ICdrValidator {
             long startCallDate = Long.parseLong(filteredCdrRowTokens[3]);
             long endCallDate = Long.parseLong(filteredCdrRowTokens[4]);
 
-            AbonentEntity abonentEntity = abonentRepository.findByPhoneNumber(callerPhoneNumber);
+            AbonentEntity abonentEntity = abonentRepository.findByPhoneNumber(callerPhoneNumber).get();
 
             int tariff = abonentEntity.getTariffId();
 

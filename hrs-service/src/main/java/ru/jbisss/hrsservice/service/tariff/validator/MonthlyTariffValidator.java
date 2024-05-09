@@ -62,7 +62,7 @@ public class MonthlyTariffValidator extends AbstractValidator {
         if (remains.getRemains() > 0) {
             LocalDateTime callPreviousMonthWithYear = cdrRow.getPreviousCallMonthWithYear();
             Optional<DebtEntity> debtPreviousMonth = debtRepository.findByAbonentPhoneNumberAndDebtDate(cdrRow.getCallerPhoneNumber(), callPreviousMonthWithYear);
-            if (debtPreviousMonth.isPresent() && isFirstCdrOfNewMonth(cdrRow)) {
+            if (isFirstCdrOfNewMonth(cdrRow) && debtPreviousMonth.isPresent()) {
                 result = monthlyTariff.getAbonentPayment().doubleValue();
                 if (minutes > remains.getRemains()) {
                     long minutesToCountByExtraTariff = minutes - remains.getRemains();
@@ -85,7 +85,16 @@ public class MonthlyTariffValidator extends AbstractValidator {
         if (currentCdrMonth.equals(currentMonth)) {
             return false;
         }
+        setZeroDebt(cdrRow);
         currentMonth = currentCdrMonth;
         return true;
+    }
+
+    private void setZeroDebt(CdrRow cdrRow) {
+        DebtEntity debtEntity = new DebtEntity();
+        debtEntity.setDebtAmount(0);
+        debtEntity.setDebtDate(cdrRow.getCallMonthWithYear());
+        debtEntity.setAbonentPhoneNumber(cdrRow.getCallerPhoneNumber());
+        debtRepository.save(debtEntity);
     }
 }

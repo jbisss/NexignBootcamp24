@@ -1,13 +1,14 @@
 package ru.jbisss.brtservice.service.abonent;
 
+import org.springframework.http.ResponseEntity;
 import ru.jbisss.brtservice.dto.TariffDto;
 import ru.jbisss.brtservice.dto.AbonentDto;
 
-public interface IAbonentService {
+public interface IAbonentService <T> {
 
-    AbonentDto addNewAbonent(AbonentDto abonentDto);
+    ResponseEntity<T> addNewAbonent(AbonentDto abonentDto);
 
-    AbonentDto changeAbonentTariff(TariffDto tariffDto, String msisdn);
+    ResponseEntity<T> changeAbonentTariff(TariffDto tariffDto, String msisdn);
 
-    AbonentDto topUpAbonentBalance(int topUp, String msisdn);
+    ResponseEntity<T> topUpAbonentBalance(int topUp, String msisdn);
 }

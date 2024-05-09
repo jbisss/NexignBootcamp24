@@ -17,7 +17,7 @@ public class DebtService implements IDebtService {
         String[] abonentDebtTokens = abonentDebtMessage.split(ApplicationConstants.COMMA_DELIMITER);
         String abonentPhoneNumber = abonentDebtTokens[0];
         double abonentDebt = Double.parseDouble(abonentDebtTokens[1]);
-        AbonentEntity abonentEntity = abonentRepository.findByPhoneNumber(abonentPhoneNumber);
+        AbonentEntity abonentEntity = abonentRepository.findByPhoneNumber(abonentPhoneNumber).get();
         abonentEntity.setBalance(abonentEntity.getBalance() - abonentDebt);
         abonentRepository.save(abonentEntity);
     }
