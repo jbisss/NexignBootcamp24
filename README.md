@@ -108,4 +108,4 @@ Bearer Token'у, который генерируется по /auth/token с т�
 }
 ```
 
-В postman-коллекции -  - пример запроса представлен в папке security
+В postman-коллекции - https://github.com/jbisss/NexignBootcamp24/blob/master/CRM.postman_collection.json - пример запроса представлен в папке security
