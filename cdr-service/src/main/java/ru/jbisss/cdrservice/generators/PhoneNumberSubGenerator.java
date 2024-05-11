@@ -45,7 +45,6 @@ public class PhoneNumberSubGenerator implements SubGenerator<String> {
         return result;
     }
 
-    // кэш?
     private String getAnyExistingNumber() {
         Iterator<Abonent> abonentIterator = abonentRepository.findAll().iterator();
         List<String> phoneNumbers = new ArrayList<>();

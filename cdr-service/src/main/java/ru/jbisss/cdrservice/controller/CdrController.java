@@ -8,7 +8,7 @@ import ru.jbisss.cdrservice.ApplicationConstants;
 import ru.jbisss.cdrservice.generators.ICdrGenerator;
 
 @RestController
-@RequestMapping("/api")
+@RequestMapping("/generator")
 @RequiredArgsConstructor
 public class CdrController {
 

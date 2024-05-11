@@ -40,7 +40,6 @@ public class HrsService implements IHrsService {
         if (cdrWithTariff.getCdrRows().next().getCallMonthWithYear().getMonthValue() == 12) {
             clearDebtsPerCdr();
         }
-        clearRemains();
     }
 
     private CdrWithTariff constructCdrWithTariff(String cdrWithTariffAsString) {
@@ -74,9 +73,5 @@ public class HrsService implements IHrsService {
 
     private void clearDebtsPerCdr() {
         debtRepository.deleteAll();
-    }
-
-    private void clearRemains() {
-        remainsRepository.deleteAll();
     }
 }

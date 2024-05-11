@@ -8,5 +8,5 @@ import java.util.Optional;
 
 public interface RemainsRepository extends JpaRepository<RemainsEntity, Integer> {
 
-    Optional<RemainsEntity> findByAbonentPhoneNumberAndServiceInTariff(String abonentPhoneNumber, ServiceInTariffEntity serviceInTariff);
+    Optional<RemainsEntity> findDistinctByAbonentPhoneNumberAndServiceInTariff(String abonentPhoneNumber, ServiceInTariffEntity serviceInTariff);
 }

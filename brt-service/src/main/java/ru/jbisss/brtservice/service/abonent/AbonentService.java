@@ -1,11 +1,14 @@
 package ru.jbisss.brtservice.service.abonent;
 
+import com.netflix.appinfo.InstanceInfo;
+import com.netflix.discovery.DiscoveryManager;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
 import ru.jbisss.brtservice.ApplicationConstants;
 import ru.jbisss.brtservice.dto.TariffDto;
 import ru.jbisss.brtservice.dto.AbonentDto;
@@ -21,6 +24,7 @@ import java.util.Optional;
 public class AbonentService implements IAbonentService<AbonentDto> {
 
     private final AbonentRepository abonentRepository;
+    private final RestTemplate restTemplate;
 
     @Override
     @Transactional
@@ -79,10 +83,40 @@ public class AbonentService implements IAbonentService<AbonentDto> {
     @Override
     @Transactional
     public ResponseEntity<AbonentDto> changeAbonentTariff(TariffDto tariffDto, String msisdn) {
+        ResponseEntity<AbonentDto> response = handleAbonentTariff(tariffDto, msisdn);
+        if (Objects.nonNull(response)) {
+            return response;
+        }
         AbonentEntity abonentEntity = abonentRepository.findByPhoneNumber(msisdn).get();
         abonentEntity.setTariffId(tariffDto.getTariffId());
         AbonentEntity abonentEntityWithChangedTariff = abonentRepository.save(abonentEntity);
         return ResponseEntity.ok(AbonentDto.buildDtoByEntity(abonentEntityWithChangedTariff));
+    }
+
+    private ResponseEntity<AbonentDto> handleAbonentTariff(TariffDto tariffDto, String msisdn) {
+        Optional<AbonentEntity> abonentEntity = abonentRepository.findByPhoneNumber(msisdn);
+        if (abonentEntity.isEmpty()) {
+            HttpHeaders headers = new HttpHeaders();
+            headers.add("errorMessage", "User doesn't exist!");
+            return new ResponseEntity<>(headers, HttpStatus.BAD_REQUEST);
+        }
+        int tariffId = tariffDto.getTariffId();
+        String response = restTemplate.getForObject(String.format("http://%s/checkTariff?tariffId=%s", getHostAndPortOfService("hrs-service"), tariffId), String.class);
+        if (Objects.requireNonNull(response).equals("NO")) {
+            HttpHeaders headers = new HttpHeaders();
+            headers.add("errorMessage", "Tariff doesn't exist!");
+            return new ResponseEntity<>(headers, HttpStatus.BAD_REQUEST);
+        }
+        return null;
+    }
+
+    private String getHostAndPortOfService(String serviceName) {
+        InstanceInfo instanceInfo = DiscoveryManager.getInstance().getDiscoveryClient().getNextServerFromEureka(serviceName, false);
+        if (instanceInfo != null) {
+            return instanceInfo.getHostName() + ":" + instanceInfo.getPort();
+        } else {
+            return null;
+        }
     }
 
     @Override

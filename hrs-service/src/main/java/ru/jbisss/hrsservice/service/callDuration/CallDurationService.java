@@ -30,7 +30,8 @@ public class CallDurationService implements ICallDurationService {
 
     @Override
     public CallDuration countCallDuration(long startCallTime, long endCallTime) {
-        long entireSeconds = (endCallTime - startCallTime) / 1000;
+        // long entireSeconds = (endCallTime - startCallTime) / 1000;
+        long entireSeconds = (endCallTime - startCallTime);
         long hours = (entireSeconds / 3600);
         entireSeconds -= hours * 3600;
         long minutes = (entireSeconds / 60);

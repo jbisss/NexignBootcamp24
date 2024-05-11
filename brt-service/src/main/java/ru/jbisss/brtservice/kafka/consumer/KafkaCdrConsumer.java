@@ -13,7 +13,6 @@ import ru.jbisss.brtservice.service.brt.IBrtService;
 public class KafkaCdrConsumer {
 
     private final IBrtService brtService;
-    private final KafkaCdrWithTariffProducer kafkaCdrWithTariffProducer;
 
     @KafkaListener(topics = "cdrFiles", groupId = "cdrConsumerGroup")
     public void consume(String message){

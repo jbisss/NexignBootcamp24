@@ -1,0 +1,163 @@
+version: "3.9"
+
+services:
+  kafka-service:
+    image: apache/kafka:latest
+    container_name: kafka
+    ports:
+      - "9092:9092"
+  # Postgres for BRT service
+  postgres_brt:
+    image: postgres:14
+    container_name: postgres_brt
+    ports:
+      - "5431:5431"
+    healthcheck:
+      test: [ "CMD", "pg_isready","-d","postgres","-U","postgres" ]
+      interval: 5s
+      timeout: 1s
+      retries: 5
+      start_period: 5s
+    environment:
+      POSTGRES_USER: "postgres"
+      POSTGRES_PASSWORD: "postgres"
+      POSTGRES_DB: "brt_db"
+    volumes:
+      - ./initBrtDb.sql:/docker-entrypoint-initdb.d/initBrtDb.sql
+    restart: always
+  # Postgres for HRS service
+  postgres_hrs:
+    image: postgres:14
+    container_name: postgres_hrs
+    ports:
+      - "5430:5430"
+    healthcheck:
+      test: [ "CMD", "pg_isready","-d","postgres","-U","postgres" ]
+      interval: 5s
+      timeout: 1s
+      retries: 5
+      start_period: 5s
+    environment:
+      POSTGRES_USER: "postgres"
+      POSTGRES_PASSWORD: "postgres"
+      POSTGRES_DB: "hrs_db"
+    volumes:
+      - ./initHrsDb.sql:/docker-entrypoint-initdb.d/initHrsDb.sql
+    restart: always
+  postgres_security:
+    image: postgres:14
+    container_name: postgres_security
+    ports:
+      - "5430:5430"
+    healthcheck:
+      test: [ "CMD", "pg_isready","-d","postgres","-U","postgres" ]
+      interval: 5s
+      timeout: 1s
+      retries: 5
+      start_period: 5s
+    environment:
+      POSTGRES_USER: "postgres"
+      POSTGRES_PASSWORD: "postgres"
+      POSTGRES_DB: "security_db"
+    volumes:
+      - ./initSecurityDb.sql:/docker-entrypoint-initdb.d/initHrsDb.sql
+    restart: always
+  # EUREKA service
+  eureka-service:
+    image: eureka-service:latest
+    restart: always
+    container_name: eureka-service
+    environment:
+      eureka.client.serviceUrl.defaultZone: http://eureka-service:8761/eureka/
+    ports:
+      - "8761:8761"
+  # CDR service
+  cdr-service:
+    image: cdr-service:latest
+    restart: always
+    container_name: cdr-service
+    ports:
+      - "8090:8090"
+    environment:
+      spring.kafka.bootstrap-servers: kafka-service:9092
+      spring.kafka.producer.bootstrap-servers: kafka-service:9092
+      eureka.client.serviceUrl.defaultZone: http://eureka-service:8761/eureka/
+    depends_on:
+      kafka-service:
+        condition: service_started
+      eureka-service:
+        condition: service_started
+  # BRT service
+  brt-service:
+    image: brt-service:latest
+    environment:
+      spring.kafka.bootstrap-servers: kafka-service:9092
+      eureka.client.serviceUrl.defaultZone: http://eureka-service:8761/eureka/
+      SPRING_DATASOURCE_URL: "jdbc:postgresql://postgres_brt:5432/brt_db"
+      SPRING_DATASOURCE_USERNAME: "postgres"
+      SPRING_DATASOURCE_PASSWORD: "postgres"
+    restart: always
+    container_name: brt-service
+    ports:
+      - "8091:8091"
+    depends_on:
+      kafka-service:
+        condition: service_started
+      eureka-service:
+        condition: service_started
+      postgres_brt:
+        condition: service_healthy
+  # HRS service
+  hrs-service:
+    image: hrs-service:latest
+    environment:
+      spring.kafka.bootstrap-servers: kafka-service:9092
+      eureka.client.serviceUrl.defaultZone: http://eureka-service:8761/eureka/
+      SPRING_DATASOURCE_URL: "jdbc:postgresql://postgres_hrs:5432/hrs_db"
+      SPRING_DATASOURCE_USERNAME: "postgres"
+      SPRING_DATASOURCE_PASSWORD: "postgres"
+    restart: always
+    container_name: hrs-service
+    ports:
+      - "8092:8092"
+    depends_on:
+      kafka-service:
+        condition: service_started
+      eureka-service:
+        condition: service_started
+      postgres_hrs:
+        condition: service_healthy
+  security-service:
+    image: security-service:latest
+    environment:
+      eureka.client.serviceUrl.defaultZone: http://eureka-service:8761/eureka/
+      SPRING_DATASOURCE_URL: "jdbc:postgresql://postgres_security:5432/security_db"
+      SPRING_DATASOURCE_USERNAME: "postgres"
+      SPRING_DATASOURCE_PASSWORD: "postgres"
+    restart: always
+    container_name: security-service
+    ports:
+      - "8093:8093"
+    depends_on:
+      postgres_security:
+        condition: service_healthy
+  # API gateway
+  api-gateway:
+    image: api-gateway:latest
+    restart: always
+    container_name: api-gateway
+    ports:
+      - "8765:8765"
+    environment:
+      eureka.client.serviceUrl.defaultZone: http://eureka-service:8761/eureka/
+    depends_on:
+      security-service:
+        condition: service_started
+      eureka-service:
+        condition: service_started
+      cdr-service:
+        condition: service_started
+      brt-service:
+        condition: service_started
+      hrs-service:
+        condition: service_started

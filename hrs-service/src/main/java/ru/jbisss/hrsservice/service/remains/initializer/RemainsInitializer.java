@@ -24,6 +24,7 @@ public class RemainsInitializer implements IRemainsInitializer {
 
     @Override
     public void initializeRemains(CdrWithTariff cdrWithTariff) {
+        clearRemains();
         final Set<String> initializedPhoneNumbers = new HashSet<>();
         for (Iterator<CdrRow> it = cdrWithTariff.getCdrRows(); it.hasNext(); ) {
             CdrRow currentCdrRow = it.next();
@@ -44,5 +45,9 @@ public class RemainsInitializer implements IRemainsInitializer {
                 }
             }
         }
+    }
+
+    private void clearRemains() {
+        remainsRepository.deleteAll();
     }
 }

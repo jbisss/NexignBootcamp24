@@ -58,17 +58,17 @@ public class CdrWithTariff {
         }
 
         public String getCallMonthWithYearAsString() {
-            LocalDateTime dateTime = LocalDateTime.ofEpochSecond(startCallDate / 1000, 0, ZoneOffset.UTC);
+            LocalDateTime dateTime = LocalDateTime.ofEpochSecond(startCallDate, 0, ZoneOffset.UTC);
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM");
             return dateTime.format(formatter);
         }
 
         public LocalDateTime getCallMonthWithYear() {
-            return LocalDateTime.ofEpochSecond(startCallDate / 1000, 0, ZoneOffset.UTC);
+            return LocalDateTime.ofEpochSecond(startCallDate, 0, ZoneOffset.UTC);
         }
 
         public LocalDateTime getPreviousCallMonthWithYear() {
-            LocalDateTime dateTime = LocalDateTime.ofEpochSecond(startCallDate / 1000, 0, ZoneOffset.UTC);
+            LocalDateTime dateTime = LocalDateTime.ofEpochSecond(startCallDate, 0, ZoneOffset.UTC);
             return dateTime.minusMonths(1);
         }
 

@@ -57,26 +57,26 @@ public class MonthlyTariffValidator extends AbstractValidator {
             serviceInTariff = getServiceByNameInTariff(monthlyTariff, "OUT_ANY");
         }
         RemainsEntity remains = remainsRepository
-                .findByAbonentPhoneNumberAndServiceInTariff(cdrRow.getCallerPhoneNumber(), serviceInTariff)
+                .findDistinctByAbonentPhoneNumberAndServiceInTariff(cdrRow.getCallerPhoneNumber(), serviceInTariff)
                 .get();
-        if (remains.getRemains() > 0) {
-            LocalDateTime callPreviousMonthWithYear = cdrRow.getPreviousCallMonthWithYear();
-            Optional<DebtEntity> debtPreviousMonth = debtRepository.findByAbonentPhoneNumberAndDebtDate(cdrRow.getCallerPhoneNumber(), callPreviousMonthWithYear);
-            if (isFirstCdrOfNewMonth(cdrRow) && debtPreviousMonth.isPresent()) {
-                result = monthlyTariff.getAbonentPayment().doubleValue();
-                if (minutes > remains.getRemains()) {
-                    long minutesToCountByExtraTariff = minutes - remains.getRemains();
-                    Integer tariffExtra = getTariffValidatorByCode(monthlyTariff.getTariffExtra()).getCorrespondingTariff().getTariffExtra();
-                    result += getTariffValidatorByCode(tariffExtra).countDebt(cdrRow, minutesToCountByExtraTariff);
-                    remains.setRemains(0);
-                } else {
-                    remains.setRemains((int) (remains.getRemains() - minutes));
-                }
-                remainsRepository.save(remains);
-            }
-        } else {
-            result = getTariffValidatorByCode(monthlyTariff.getTariffExtra()).countDebt(cdrRow, minutes);
+        Optional<DebtEntity> debtPreviousMonth = debtRepository.findByAbonentPhoneNumberAndDebtDate(cdrRow.getCallerPhoneNumber(), cdrRow.getPreviousCallMonthWithYear());
+        if (isFirstCdrOfNewMonth(cdrRow) && debtPreviousMonth.isPresent()) {
+            result += monthlyTariff.getAbonentPayment().doubleValue();
         }
+        Integer tariffExtra = monthlyTariff.getTariffExtra();
+        if (remains.getRemains() > 0) {
+            if (minutes > remains.getRemains()) {
+                remains.setRemains(0);
+                long minutesToCountByExtraTariff = minutes - remains.getRemains();
+                result += getTariffValidatorByCode(tariffExtra).countDebt(cdrRow, minutesToCountByExtraTariff);
+            } else {
+                remains.setRemains((int) (remains.getRemains() - minutes));
+            }
+            remainsRepository.save(remains);
+        } else {
+            result += getTariffValidatorByCode(tariffExtra).countDebt(cdrRow, minutes);
+        }
+        setZeroDebt(cdrRow);
         return result;
     }
 
@@ -85,7 +85,6 @@ public class MonthlyTariffValidator extends AbstractValidator {
         if (currentCdrMonth.equals(currentMonth)) {
             return false;
         }
-        setZeroDebt(cdrRow);
         currentMonth = currentCdrMonth;
         return true;
     }

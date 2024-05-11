@@ -13,7 +13,7 @@ public class BrtService implements IBrtService {
 
     private final ICdrValidator cdrValidator;
 
-    private KafkaCdrWithTariffProducer kafkaCdrWithTariffProducer;
+    private final KafkaCdrWithTariffProducer kafkaCdrWithTariffProducer;
 
     @Override
     public void addTariffToCdrAndSend(String cdrAsString) {
