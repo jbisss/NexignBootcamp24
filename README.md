@@ -37,7 +37,7 @@ Services communication - **Kafka** Message Broker
 API SPECIFICATION: https://app.swaggerhub.com/apis/gorovenkoiulia/CRM/1.0.0
 
 <p align="center">
-  <img src="">
+  <img src="https://raw.githubusercontent.com/jbisss/NexignBootcamp24/master/service_schema.jpg">
 </p>
 
 ## CDR сервис
