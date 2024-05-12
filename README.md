@@ -56,6 +56,12 @@ Services communication - **Kafka** Message Broker
 Также Brt получает данные о том, сколько средств необходимо списать с абонента по итогам
 тарификкации в Hrs-сервисе
 
+<p align="center">
+  <img src="https://raw.githubusercontent.com/jbisss/NexignBootcamp24/master/BRT_db_schema.jpg" alt="BRT_DB_SCHEMA">
+    <br>
+BRT_DB_SCHEMA
+</p>
+
 ### HRS сервис
 
 **port** - <u>random</u>
