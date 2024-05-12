@@ -32,6 +32,14 @@
 БД - postgres
 Services communication - **Kafka** Message Broker
 
+## Services schema
+
+API SPECIFICATION: https://app.swaggerhub.com/apis/gorovenkoiulia/CRM/1.0.0
+
+<p align="center">
+  <img src="">
+</p>
+
 ## CDR сервис
 
 **port** - <u>random</u>
@@ -72,6 +80,12 @@ BRT_DB_SCHEMA
 
 Данные о том, сколько средств необходимо списать с каждого абонента по итогам тарификации постятся
 в Kafka, откуда будут вычитаны Brt-сервисом и обработаны
+
+<p align="center">
+  <img src="https://raw.githubusercontent.com/jbisss/NexignBootcamp24/master/HRS_db_schema.jpg" alt="HRS_DB_SCHEMA">
+    <br>
+HRS_DB_SCHEMA
+</p>
 
 ### API-Gateway сервис
 
